@@ -74,6 +74,7 @@ jobs:
           flutter-version: '3.47.4'
           channel: stable
           cache: true
+      - uses: android-actions/setup-android@v3
       - run: sdkmanager 'ndk;28.2.13676358'
       - name: Configure Android signing
         run: python scripts/configure_signing.py
@@ -120,6 +121,7 @@ jobs:
       - uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
+          mingw-version: '12.2.0'
       - run: python scripts/build_windows.py ${{ matrix.arguments }}
       - run: choco install ffmpeg --no-progress -y
       - run: python scripts/smoke_windows.py ${{ matrix.arguments }}
