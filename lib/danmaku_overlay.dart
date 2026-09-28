@@ -40,7 +40,8 @@ List<DanmakuFlight> planDanmaku(
       continue;
     }
     final runes = item.text.runes;
-    final text = trimDanmakuText(item.text, 100) + (runes.length > 100 ? '…' : '');
+    final text =
+        trimDanmakuText(item.text, 100) + (runes.length > 100 ? '…' : '');
     final size = measure(text).ceilToDouble() + 8;
     final lane = lanes.indexWhere((previous) {
       if (previous == null) return true;

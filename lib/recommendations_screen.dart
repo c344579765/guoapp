@@ -237,63 +237,63 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                       );
                     }
                     return RefreshIndicator(
-                    onRefresh: () => _load(force: true),
-                    child: CustomScrollView(
-                      controller: _scroll,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: [
-                        SliverPadding(
-                          padding: const EdgeInsets.all(16),
-                          sliver: SliverGrid(
-                            gridDelegate: dramaGridDelegate(
-                              context,
-                              constraints.maxWidth - 32,
-                            ),
-                            delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                            ) {
-                              final drama = _items[index];
-                              return DramaTile(
-                                key: ValueKey(drama.id),
-                                drama: drama,
-                                repository: widget.repository,
-                                onTap: () => unawaited(
-                                  openPlaybackDirectly(
-                                    context,
-                                    drama: drama,
-                                    repository: widget.repository,
-                                    store: widget.store,
-                                  ),
-                                ),
-                              );
-                            }, childCount: _items.length),
-                          ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                            child: Center(
-                              child: _more
-                                  ? const CircularProgressIndicator()
-                                  : _hasMore
-                                  ? OutlinedButton.icon(
-                                      onPressed: () => _load(more: true),
-                                      icon: const Icon(
-                                        Icons.auto_awesome_rounded,
-                                      ),
-                                      label: const Text('继续推荐'),
-                                    )
-                                  : TextButton(
-                                      onPressed: () => _load(force: true),
-                                      child: const Text('本轮推荐已看完，刷新获取新推荐'),
+                      onRefresh: () => _load(force: true),
+                      child: CustomScrollView(
+                        controller: _scroll,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.all(16),
+                            sliver: SliverGrid(
+                              gridDelegate: dramaGridDelegate(
+                                context,
+                                constraints.maxWidth - 32,
+                              ),
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
+                                final drama = _items[index];
+                                return DramaTile(
+                                  key: ValueKey(drama.id),
+                                  drama: drama,
+                                  repository: widget.repository,
+                                  onTap: () => unawaited(
+                                    openPlaybackDirectly(
+                                      context,
+                                      drama: drama,
+                                      repository: widget.repository,
+                                      store: widget.store,
                                     ),
+                                  ),
+                                );
+                              }, childCount: _items.length),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                              child: Center(
+                                child: _more
+                                    ? const CircularProgressIndicator()
+                                    : _hasMore
+                                    ? OutlinedButton.icon(
+                                        onPressed: () => _load(more: true),
+                                        icon: const Icon(
+                                          Icons.auto_awesome_rounded,
+                                        ),
+                                        label: const Text('继续推荐'),
+                                      )
+                                    : TextButton(
+                                        onPressed: () => _load(force: true),
+                                        child: const Text('本轮推荐已看完，刷新获取新推荐'),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
         ),
