@@ -46,7 +46,6 @@ jobs:
         working-directory: native
 
   android:
-    needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -94,7 +93,6 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   windows:
-    needs: checks
     runs-on: windows-latest
     timeout-minutes: 45
     strategy:
@@ -133,7 +131,6 @@ jobs:
           retention-days: 14
 
   ios:
-    needs: checks
     runs-on: macos-latest
     timeout-minutes: 60
     strategy:
