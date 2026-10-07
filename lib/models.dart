@@ -14,7 +14,18 @@ class SourceSite {
       id == 'dsd' ||
       id == 'sorani' ||
       id == 'guipian' ||
-      id == 'hanxiaoquan';
+      id == 'hanxiaoquan' ||
+      duanjuPaged;
+  bool get duanjuPaged => const {
+    'yaguo',
+    'guanguo',
+    'huaguo',
+    'niuguo',
+    'wangguo',
+    'faguo',
+    'piguo',
+    'wuguo',
+  }.contains(id);
   bool get searchSuggestions => id == 'hongguo';
   String get groupId => switch (id) {
     'huangguo-video' || 'huangguoai' || 'cloudfront' => 'huangguo',
@@ -37,6 +48,20 @@ class SourceSite {
     '韩小圈',
     '韩剧 · 韩国电影 · 综艺动漫',
   );
+  static const duanjuValues = [
+    SourceSite('yaguo', '芽果', '星芽短剧 · 登录接口'),
+    SourceSite('maoguo', '猫果', '七猫短剧 · 签名接口'),
+    SourceSite('fanguo', '饭果', '西饭短剧 · 搜索接口'),
+    SourceSite('guanguo', '观果', '围观短剧 · 分类接口'),
+    SourceSite('heguo', '河果', '河马剧场 · 网页接口'),
+    SourceSite('xingguo', '星果', '星星短剧 · 连载接口'),
+    SourceSite('huaguo', '花果', '花生短剧 · 网页目录'),
+    SourceSite('niuguo', '牛果', '牛牛短剧 · 分类接口'),
+    SourceSite('wangguo', '网果', '短剧网站 · 网页目录'),
+    SourceSite('faguo', '发果', '168 短剧 · 网页目录'),
+    SourceSite('piguo', '皮果', 'PTT 短剧 · 网页目录'),
+    SourceSite('wuguo', '伍果', '五五短剧 · 网页目录'),
+  ];
 
   /// 默认可见的站源：红果、韩小圈、鬼片网、青空次元。
   static const primaryValues = [hongguo, hanxiaoquan, guipian, sorani];
@@ -50,6 +75,7 @@ class SourceSite {
     SourceSite('huangguo-video', '黄果视频', '视频剧集'),
     SourceSite('huangguoai', '黄果 AI', 'AI 短剧'),
     SourceSite('cloudfront', '黄果旧版', '旧 API 剧库'),
+    ...duanjuValues,
   ];
   static const knownValues = [...primaryValues, ...restrictedValues];
   static const allValues = [...primaryValues, ...restrictedValues];

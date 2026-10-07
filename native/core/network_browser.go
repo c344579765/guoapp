@@ -32,6 +32,19 @@ type huangguoBrowserTransport struct {
 	newClient func(string) (browserHTTPClient, error)
 }
 
+var duanjuBrowserHosts = func() map[string]bool {
+	hosts := map[string]bool{}
+	for _, spec := range duanjuProviderCatalog {
+		if !spec.Browser {
+			continue
+		}
+		if parsed, err := url.Parse(spec.Base); err == nil && parsed.Host != "" {
+			hosts[strings.ToLower(parsed.Host)] = true
+		}
+	}
+	return hosts
+}()
+
 func newHuangguoBrowserTransport(base http.RoundTripper, downloader *Downloader) *huangguoBrowserTransport {
 	configured, _ := url.Parse(downloader.providerBaseURL(sourceHuangguoVideo))
 	transport := &huangguoBrowserTransport{
@@ -46,7 +59,9 @@ func newHuangguoBrowserTransport(base http.RoundTripper, downloader *Downloader)
 func (transport *huangguoBrowserTransport) matches(request *http.Request) bool {
 	return (request.Method == http.MethodGet || request.Method == http.MethodHead) &&
 		(request.URL.Scheme == "http" || request.URL.Scheme == "https") &&
-		(strings.EqualFold(request.URL.Host, transport.host) || strings.EqualFold(request.URL.Hostname(), "huangguo.video"))
+		(strings.EqualFold(request.URL.Host, transport.host) ||
+			strings.EqualFold(request.URL.Hostname(), "huangguo.video") ||
+			duanjuBrowserHosts[strings.ToLower(request.URL.Hostname())])
 }
 
 func (transport *huangguoBrowserTransport) createClient(proxy string) (browserHTTPClient, error) {

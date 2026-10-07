@@ -149,13 +149,13 @@ func parseHongguoDanmaku(result map[string]any, videoID string, start, duration 
 				return ' '
 			}
 			return r
-		}, mapString(nestedMap(common, "content"), "text")))
+		}, expandDanmakuEmoji(mapString(nestedMap(common, "content"), "text"))))
 		id := mapString(comment, "comment_id")
 		if err != nil || position < start || position >= page.NextMS || text == "" || id == "" || len(id) > 120 || seen[id] {
 			continue
 		}
 		if runes := []rune(text); len(runes) > 180 {
-			text = string(runes[:180]) + "…"
+			text = trimDanmakuText(text, 180) + "…"
 		}
 		seen[id] = true
 		page.Items = append(page.Items, hongguoDanmakuItem{ID: id, Text: text, TimeMS: position})

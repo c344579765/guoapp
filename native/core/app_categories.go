@@ -70,6 +70,9 @@ func validNativeCategory(source, category string) bool {
 	case sourceHanxiaoquan:
 		return validHanxiaoquanCategory(category)
 	}
+	if isDuanjuProviderSource(source) {
+		return validDuanjuCategory(source, category)
+	}
 	return false
 }
 
@@ -136,6 +139,14 @@ func (engine *nativeEngine) nativeCategories(ctx context.Context, source string,
 	case sourceHanxiaoquan:
 		all = append(all, d.fetchHanxiaoquanCategories()...)
 	default:
+		if isDuanjuProviderSource(source) {
+			var categories []nativeCategory
+			categories, err = d.fetchDuanjuCategories(ctx, source)
+			if err == nil {
+				all = append(all, categories...)
+			}
+			break
+		}
 		return nil, errors.New("请选择有效站源")
 	}
 	if err != nil {

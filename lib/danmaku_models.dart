@@ -2,6 +2,29 @@ const danmakuWindowMs = 30000;
 const danmakuLifetimeMs = 8000;
 const danmakuMaxDurationMs = 86400000;
 
+bool _danmakuEmojiModifier(int rune) => rune == 0xfe0f || rune == 0xfe0e;
+
+bool _danmakuEmojiJoiner(int rune) => rune == 0x200d;
+
+String trimDanmakuText(String text, int limit) {
+  final runes = text.runes.toList();
+  if (runes.length <= limit) return text;
+  var cut = limit;
+  while (cut > 0) {
+    var retreat = false;
+    if (cut < runes.length && _danmakuEmojiModifier(runes[cut])) {
+      cut--;
+      retreat = true;
+    }
+    if (cut > 0 && _danmakuEmojiJoiner(runes[cut - 1])) {
+      cut--;
+      retreat = true;
+    }
+    if (!retreat) break;
+  }
+  return String.fromCharCodes(runes.take(cut));
+}
+
 class DanmakuItem {
   const DanmakuItem({
     required this.id,
@@ -62,11 +85,7 @@ class DanmakuPage {
       if (cleaned.isEmpty) continue;
       seen.add(id);
       items.add(
-        DanmakuItem(
-          id: id,
-          text: String.fromCharCodes(cleaned.runes.take(181)),
-          timeMs: time,
-        ),
+        DanmakuItem(id: id, text: trimDanmakuText(cleaned, 181), timeMs: time),
       );
     }
     items.sort((a, b) => a.timeMs.compareTo(b.timeMs));

@@ -97,6 +97,14 @@ func (d *Downloader) nativeCoverAddress(ctx context.Context, drama nativeDrama) 
 		}
 		fresh, err := parseHuangguoSortDetail(body, pageURL, Drama{ID: drama.ID, Source: source, SourceID: id})
 		return nativeNormalize(fresh).Cover, err
+	default:
+		if isDuanjuProviderSource(source) {
+			fresh, _, err := d.fetchDuanjuDetail(ctx, source, id)
+			if err != nil {
+				return "", err
+			}
+			return nativeNormalize(fresh).Cover, nil
+		}
 	}
 	return "", errors.New("该站源暂无封面补齐接口")
 }

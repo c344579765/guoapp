@@ -46,6 +46,9 @@ func (d *Downloader) providerBaseURL(source string) string {
 	case sourceHanxiaoquan:
 		configured, fallback = d.cfg.HanxiaoquanURL, hanxiaoquanSiteBaseURL
 	default:
+		if spec, found := duanjuSourceSpecFor(source); found {
+			return d.duanjuBaseURL(spec.ID)
+		}
 		fallback = "https://d2pypzndaqisk.cloudfront.net"
 	}
 	return strings.TrimRight(firstNonEmpty(configured, fallback), "/")
@@ -82,13 +85,13 @@ func providerSourceForURL(raw string) string {
 	case host == "jennyhow.com" || host == "www.jennyhow.com":
 		return sourceHanxiaoquan
 	default:
-		return ""
+		return duanjuSourceForHost(host)
 	}
 }
 
 func (d *Downloader) providerURLCandidates(raw string) []string {
 	source := providerSourceForURL(raw)
-	if source == "" || source == sourceHuangju || source == sourceYeguo {
+	if source == "" || source == sourceHuangju || source == sourceYeguo || isDuanjuProviderSource(source) {
 		return []string{raw}
 	}
 	parsed, _ := url.Parse(raw)
@@ -141,6 +144,9 @@ func (d *Downloader) resolveProviderMedia(ctx context.Context, task Task) (provi
 	}
 	if chapter.Source == sourceHanxiaoquan {
 		return d.resolveHanxiaoquanMedia(ctx, task)
+	}
+	if isDuanjuProviderSource(chapter.Source) {
+		return d.resolveDuanjuMedia(ctx, task)
 	}
 	if strings.HasPrefix(chapter.VideoURL, "hongguo-cenc://") {
 		return d.resolveHongguoMedia(ctx, task)

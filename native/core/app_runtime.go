@@ -589,6 +589,19 @@ func (engine *nativeEngine) nativeCatalog(ctx context.Context, input nativeInput
 		result.HasMore = more
 		return result, nil
 	}
+	if query != "" && isDuanjuProviderSource(source) {
+		if !duanjuSupportsSearch(source) {
+			return result, fmt.Errorf("%s 暂不支持在线搜索，可在已加载内容中筛选", duanjuSourceName(source))
+		}
+		items, err := d.searchDuanju(ctx, source, query)
+		if err != nil {
+			return result, err
+		}
+		for _, drama := range items {
+			result.Items = append(result.Items, nativeNormalize(drama))
+		}
+		return result, nil
+	}
 	if query != "" {
 		engine.mu.Lock()
 		items := append([]nativeDrama{}, engine.catalogs[source]...)
@@ -680,11 +693,15 @@ func (engine *nativeEngine) nativeCatalog(ctx context.Context, input nativeInput
 		result.HasMore = len(items) >= 20
 	case sourceCloudFront:
 		items, result.HasMore, err = d.fetchLegacyCatalogCategoryPage(ctx, page, category)
+	default:
+		if isDuanjuProviderSource(source) {
+			items, result.HasMore, err = d.fetchDuanjuCatalogPage(ctx, source, page, category)
+		}
 	}
 	if err != nil && len(items) == 0 {
 		return result, err
 	}
-	if len(items) == 0 && page == 1 && source != sourceHuangju && source != sourceYeguo && source != sourceDSD && source != sourceSorani && source != sourceGuipian && source != sourceHanxiaoquan {
+	if len(items) == 0 && page == 1 && source != sourceHuangju && source != sourceYeguo && source != sourceDSD && source != sourceSorani && source != sourceGuipian && source != sourceHanxiaoquan && !isDuanjuProviderSource(source) {
 		return result, errors.New("站源暂未返回剧集，请稍后刷新")
 	}
 	if err != nil {
@@ -731,6 +748,10 @@ func (engine *nativeEngine) nativeDetail(ctx context.Context, drama nativeDrama)
 	case sourceHanxiaoquan:
 		raw, chapters, err = engine.downloader.fetchHanxiaoquanDetail(ctx, sourceID)
 	default:
+		if isDuanjuProviderSource(source) {
+			raw, chapters, err = engine.downloader.fetchDuanjuDetail(ctx, source, sourceID)
+			break
+		}
 		title, chapters, err = engine.downloader.GetHuangguoChapters(ctx, source, sourceID)
 	}
 	if err != nil {
