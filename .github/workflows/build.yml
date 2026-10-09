@@ -45,7 +45,13 @@ jobs:
           version: '12.2.0'
       - run: python scripts/build_windows.py ${{ matrix.arguments }}
       - run: choco install ffmpeg --no-progress -y
-      - run: python scripts/smoke_windows.py ${{ matrix.arguments }} || echo "::warning::播放自检未通过（CI 无音频/图形设备，未做设备验收），继续出包。"
+      - name: 播放自检（非阻塞）
+        run: |
+          try {
+            python scripts/smoke_windows.py ${{ matrix.arguments }}
+          } catch {
+            Write-Host "::warning::播放自检未通过（CI 无音频/图形设备，未做设备验收），继续出包。"
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.edition }}-windows
