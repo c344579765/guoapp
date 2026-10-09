@@ -166,7 +166,7 @@ jobs:
       - uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
-          mingw-version: '12.2.0'
+          version: '12.2.0'
       - run: python scripts/build_windows.py ${{ matrix.arguments }}
       - run: choco install ffmpeg --no-progress -y
       - run: python scripts/smoke_windows.py ${{ matrix.arguments }} || echo "::warning::播放自检未通过（CI 无音频/图形设备，未做设备验收），继续出包。"
